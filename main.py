@@ -46,3 +46,7 @@ def create_customer(customer: CustomerCreate, db: Session = Depends(get_db)):
 @app.delete("/customers/{customer_id}")
 def delete_customer(customer_id: int, db: Session = Depends(get_db)):
     return controllers.delete_customer(db, customer_id)
+
+@app.get("/jaaj/")
+def get_jaaj():
+    return "jaaj"
