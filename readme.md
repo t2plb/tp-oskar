@@ -35,6 +35,8 @@ Dans votre VM vous allez executer les commandes suivantes :
 
 Dans l'ordre, ces commandes permettent d'installer le runner en tant que service et le démarrer.
 
+### Docker
+
 Une fois cela fais, nous allons installer docker. Si on suit la [documentation officielle Docker](https://docs.docker.com/engine/install/ubuntu/), il faut d'abord enregistrer les repos docker dans notre source de repo de package de la VM. Voici la commande donnée par la documentation :
 
 ```shell
@@ -66,6 +68,12 @@ sudo docker run hello-world
 ```
 
 Voici le resultat que vous devez obtenir ![Image](./jaaj/docker%20hello.png)
+
+## Optimisation.
+
+Pour l'image du docker, j'ai utiliser une version slim de python 3.11 ce qui permet de passer d'une image de ~1Go à ~40Mo.
+
+J'ai également tagguer mon image lors de la création de cette dernière pour eviter d'avoir à rebuild l'image à chaque fois dans mon conteneur docker.
 
 ## Réalisation
 
@@ -123,7 +131,7 @@ jobs:
           sudo docker ps
 ```
 
-#### Explication du workflow
+### Explication du workflow
 
 ```yml
 name: Test sur runner auto-hébergé
@@ -134,4 +142,76 @@ on:
       - master
 ```
 
-La balise name permet de donner un nom à notre Workflow qu'on verra apparaitre dans la Page Actions de github
+La balise name permet de donner un nom à notre Workflow qu'on verra apparaitre dans la Page Actions de github ![Image](./jaaj/actions.png)
+Cela permet de visualiser facilement les différents workflows si on en a plusieurs pour un projet
+
+Ensuite les balises on, push, branches sont les triggers. Ici on active le workflow si un push sur la branche master est fait.
+
+```yaml
+jobs:
+  test:
+    name: ci-cd on self hosted runner
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Configurer Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Installer les dépendances
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: Linter
+        run: |
+          source venv/bin/activate
+          pylint --ignore=venv . | tee rapport_pylint.txt
+      
+      - name: Run test
+        run: |
+          source venv/bin/activate
+          pytest ./test.py
+
+      - name: Build image docker
+        run: |
+          sudo docker build -t tp-docker .
+          sudo docker tag tp-docker tp-docker:latest
+      
+      - name: Docker compose
+        run: |
+          sudo docker compose up -d
+      
+      - name: check docker
+        run: |
+          sudo docker ps
+```
+
+Ensuite dans le reste du workflow, on se décrit ce que fait notre workflow. Par exemple, on l'action qui s'appelle "Checkout du code" qui va se positionner sur la bonne branche du code, Ou bien l'action "Configurer Python" qui elle va s'occuper d'installer et de configurer Python.
+
+Ensuite on continue dans notre Workflow à installer les dépendances, effecuter les test et les contenriser dans un conteneur Docker
+
+A noter que la balise ```run``` permet d'executer une ou plusieurs ligne de commande (avec le pipe | ) dans notre runner.
+
+Attention la commande doit être reconnu par l'OS. On pourra pas utiliser un script PS1 sur du Linux par exemple c'est donc important de bien choisir l'OS de son runner. Cependant la syntaxe pour les chemins de fichier reste bien formater comme pour Linux quelque soit l'OS du runner, c'est à dire :
+
+```/path/to/file/``` et non pas ```C:\path\to\file``` Comme sur windows
+
+Pour spécifier qu'on souhaite executer notre Workflows sur un runner self-hosted on specifie cette balise dans notre workflows
+
+```yaml
+runs-on: self-hosted
+```
+
+### Log CI/CD
+
+Je met dans le mail des logs d'un job qui s'est executé avec succès
+
+## Difficultés rencontrées
+
+Je n'ai pas rencontré de diffculté particulière pour ce TP. Les workflows sont un outil avec lequel je suis à l'aise. La seule "difficulté" que j'ai rencontré serait pour le taggage de mes images docker. Je n'avais pas bien compris comment cela fonctionnait. Mais un petit tour sur la documentation officiel m'as permis de trouver comment faire.
