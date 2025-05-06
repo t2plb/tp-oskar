@@ -27,10 +27,12 @@ jobs:
 
       - name: Linter
         run: |
+          source venv/bin/activate
           pylint ./ | tee rapport_pylint.txt
       
       - name: Run test
         run: |
+          source venv/bin/activate
           pytest ./test.py
 
       - name: Build image docker
