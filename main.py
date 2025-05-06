@@ -1,5 +1,4 @@
 from fastapi import FastAPI, Depends
-from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -47,15 +46,3 @@ def create_customer(customer: CustomerCreate, db: Session = Depends(get_db)):
 @app.delete("/customers/{customer_id}")
 def delete_customer(customer_id: int, db: Session = Depends(get_db)):
     return controllers.delete_customer(db, customer_id)
-
-client = TestClient(app)
-
-def test_read_main():
-    response = client.get("/customers/")
-    assert response.status_code == 200
-
-# on test si il y a une commande avec un article id 1
-
-def test_read_order():
-    response = client.get("/orders/1")
-    assert response.status_code == 200

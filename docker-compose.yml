@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  tp-docker:
+    build: . 
+    container_name: tp-docker-container
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=mysql+pymysql://root:changeme@db:3306/tp_docker
+    networks:
+      - tp-network
+
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=changeme
+      - MYSQL_DATABASE=tp_docker
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - tp-network
+
+volumes:
+  mysql_data:
+
+networks:
+  tp-network:
+    driver: bridge
