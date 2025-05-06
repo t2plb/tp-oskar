@@ -37,15 +37,15 @@ jobs:
 
       - name: Build image docker
         run: |
-          docker build -t tp-docker:latest .
+          sudo docker build -t tp-docker:latest .
       
       - name: Docker compose
         run: |
-          docker compose pull
-          docker compose up -d
+          sudo docker compose pull
+          sudo docker compose up -d
       
       - name: check docker
         run: |
-          docker ps
+          sudo docker ps
 
     
