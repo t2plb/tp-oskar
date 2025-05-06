@@ -5,7 +5,7 @@ services:
     image: tp-docker
     container_name: tp-docker
     ports:
-      - "8000:8000"
+      - "5000:5000"
     depends_on:
       - db
     environment:

@@ -50,3 +50,7 @@ def delete_customer(customer_id: int, db: Session = Depends(get_db)):
 @app.get("/jaaj/")
 def get_jaaj():
     return "jaaj"
+
+@app.get("/fjeaj/")
+def get_fjeaj():
+    return "fjeaj"
