@@ -37,7 +37,8 @@ jobs:
 
       - name: Build image docker
         run: |
-          sudo docker build -t tp-docker:latest .
+          sudo docker build -t tp-docker .
+          sudo docker tag titouanbonnetplomb/tp-docker:latest
       
       - name: Docker compose
         run: |
