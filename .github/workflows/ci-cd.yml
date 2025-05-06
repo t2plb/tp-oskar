@@ -38,11 +38,10 @@ jobs:
       - name: Build image docker
         run: |
           sudo docker build -t tp-docker .
-          sudo docker tag tp-docker titouanbonnetplomb/tp-docker:latest
+          sudo docker tag tp-docker tp-docker:latest
       
       - name: Docker compose
         run: |
-          sudo docker compose pull
           sudo docker compose up -d
       
       - name: check docker

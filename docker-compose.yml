@@ -2,8 +2,8 @@ version: '3.8'
 
 services:
   tp-docker:
-    image: tp-docker:latest
-    container_name: titouanbonnetplomb/tp-docker:latest
+    image: tp-docker
+    container_name: tp-docker
     ports:
       - "8000:8000"
     depends_on:
