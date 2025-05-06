@@ -32,9 +32,6 @@ jobs:
       - name: Run test
         run: |
           pytest ./test.py
-    
-      - name: Checkout du code
-        uses: actions/checkout@v4
 
       - name: Build image docker
         run: |
