@@ -3,7 +3,7 @@ name: Test sur runner auto-hébergé
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   test:
