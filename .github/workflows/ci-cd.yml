@@ -28,7 +28,7 @@ jobs:
       - name: Linter
         run: |
           source venv/bin/activate
-          pylint ./ | tee rapport_pylint.txt
+          pylint --ignore=venv . | tee rapport_pylint.txt
       
       - name: Run test
         run: |
